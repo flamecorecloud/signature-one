@@ -16,7 +16,7 @@ import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import { execFile, spawn } from 'child_process';
 import { postProcessPDF } from './functions/postProcessPDF';
-import { getSofficePath } from './functions/getSofficePath';
+// import { getSofficePath } from './functions/getSofficePath';
 import { converterMap } from './functions/filterAction';
 
 class AppUpdater {
@@ -145,8 +145,8 @@ app
   .catch(console.log);
 
 // === FEATURES ===
-const sofficePath = getSofficePath();
-console.log('Using LibreOffice binary:', sofficePath);
+// const sofficePath = getSofficePath();
+// console.log('Using LibreOffice binary:', sofficePath);
 
 ipcMain.handle('libre-version', async () => {
   try {
@@ -284,72 +284,72 @@ ipcMain.handle('upload-file', async (event, params) => {
           );
         }
       } else {
-        const conversionResult = await new Promise((resolve, reject) => {
-          const libre = spawn(sofficePath, [
-            '--headless',
-            '--nologo',
-            '--nofirststartwizard',
-            '--norestore',
-            '--invisible',
-            '--nodefault',
-            '--nolockcheck',
-            '--convert-to',
-            convertTo,
-            '--outdir',
-            outputDir,
-            filePath,
-          ]);
+        // const conversionResult = await new Promise((resolve, reject) => {
+        //   const libre = spawn(sofficePath, [
+        //     '--headless',
+        //     '--nologo',
+        //     '--nofirststartwizard',
+        //     '--norestore',
+        //     '--invisible',
+        //     '--nodefault',
+        //     '--nolockcheck',
+        //     '--convert-to',
+        //     convertTo,
+        //     '--outdir',
+        //     outputDir,
+        //     filePath,
+        //   ]);
   
-          libre.on('error', (err) => {
-            console.error(`Failed to start LibreOffice: ${err.message}`);
-            reject(err); // reject promise biar caller tau
-          });
+        //   libre.on('error', (err) => {
+        //     console.error(`Failed to start LibreOffice: ${err.message}`);
+        //     reject(err); // reject promise biar caller tau
+        //   });
   
-          libre.stdout.on('data', (data) =>
-            console.log('stdout:', data.toString()),
-          );
-          libre.stderr.on('data', (data) =>
-            console.error('stderr:', data.toString()),
-          );
+        //   libre.stdout.on('data', (data) =>
+        //     console.log('stdout:', data.toString()),
+        //   );
+        //   libre.stderr.on('data', (data) =>
+        //     console.error('stderr:', data.toString()),
+        //   );
   
-          libre.on('close', async (code) => {
-            if (code === 0) {
-              try {
-                if (options?.pdf) {
-                  const result = await postProcessPDF(outputFile, options, placeholder, action);
-                  console.log('pdf-to-sign conver', result)
-                  resolve({ 
-                    input : filePath,
-                    output : result.output,
-                    status : result.status,
-                    message : result.message
-                  });
-                } else {
-                  resolve({ 
-                    input: filePath, 
-                    output: outputFile,
-                    status : 'success',
-                    message : "Convert Successfully"
-                  });
-                }
-              } catch (err) {
-                reject(err);
-              }
-            } else {
-              reject(
-                new Error(
-                  `LibreOffice failed to convert ${filePath} (exit code ${code})`,
-                ),
-              );
-            }
-          });
-        });
+        //   libre.on('close', async (code) => {
+        //     if (code === 0) {
+        //       try {
+        //         if (options?.pdf) {
+        //           const result = await postProcessPDF(outputFile, options, placeholder, action);
+        //           console.log('pdf-to-sign conver', result)
+        //           resolve({ 
+        //             input : filePath,
+        //             output : result.output,
+        //             status : result.status,
+        //             message : result.message
+        //           });
+        //         } else {
+        //           resolve({ 
+        //             input: filePath, 
+        //             output: outputFile,
+        //             status : 'success',
+        //             message : "Convert Successfully"
+        //           });
+        //         }
+        //       } catch (err) {
+        //         reject(err);
+        //       }
+        //     } else {
+        //       reject(
+        //         new Error(
+        //           `LibreOffice failed to convert ${filePath} (exit code ${code})`,
+        //         ),
+        //       );
+        //     }
+        //   });
+        // });
   
-        results.push(conversionResult);
-        sendProgress(
-          Math.round(((i + 1) / total) * 100),
-          `Completed ${i + 1}/${total}`,
-        );
+        // results.push(conversionResult);
+        // sendProgress(
+        //   Math.round(((i + 1) / total) * 100),
+        //   `Completed ${i + 1}/${total}`,
+        // );
       }
     } catch (err: any) {
       console.error('Conversion failed for file:', filePath, err);

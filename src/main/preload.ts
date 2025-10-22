@@ -37,9 +37,4 @@ contextBridge.exposeInMainWorld('electronAPI', {
   },
 });
 
-contextBridge.exposeInMainWorld("pandoc", {
-  convert: (inputPath: string, outputFormat: string) =>
-    ipcRenderer.invoke("pandoc:convert", inputPath, outputFormat),
-});
-
 export type ElectronHandler = typeof electronHandler;

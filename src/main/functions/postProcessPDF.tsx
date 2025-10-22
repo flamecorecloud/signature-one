@@ -4,6 +4,7 @@ import path from 'path';
 import { plainAddPlaceholder } from '@signpdf/placeholder-plain';
 import { SignPdf } from '@signpdf/signpdf';
 import { P12Signer } from '@signpdf/signer-p12';
+import { encryptWithExpiry } from './postProcessSecure';
 // import { addExpiryVisualBlock } from './postProcessPDFExpired';
 
 export async function postProcessPDF(
@@ -87,6 +88,13 @@ export async function postProcessPDF(
     } else {
       fs.writeFileSync(outputFile, pdfBuffer);
       console.log(`Watermarked PDF saved: ${outputFile}`);
+
+      // const expiryFile = outputFile.replace('.pdf', '-expiry.enc');
+      // const expiryDate = new Date('2025-10-25');
+
+      // encryptWithExpiry(outputFile, expiryFile, 'test123', expiryDate);
+      // console.log(`PDF dienkripsi dengan masa berlaku sampai ${expiryDate.toISOString()}`);
+
       return {
         output: outputFile,
         status : 'success',

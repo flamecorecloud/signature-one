@@ -33,15 +33,14 @@ export default function Screen() {
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    // dengarkan progress dari main process
-    window.electronAPI.onConvertProgress((data) => {
+    window?.electronAPI?.onConvertProgress((data) => {
       setProgress(data.value);
       setProgressMessage(data.message);
     });
   }, []);
 
   const handleUploadCert = async () => {
-    const result = await window.electronAPI.selectCertFile();
+    const result = await window?.electronAPI?.selectCertFile();
     if (result) setCertPath(result);
   };
 

@@ -187,7 +187,7 @@
   },
   "build": {
     "productName": "Signature One",
-    "appId": "org.erb.SignatureOne",
+    "appId": "cloud.flamecore.SignatureOne",
     "asar": true,
     "afterSign": ".erb/scripts/notarize.js",
     "asarUnpack": "**\\*.{node,dll}",
@@ -197,7 +197,7 @@
       "package.json"
     ],
     "mac": {
-      "notarize": false,
+      "notarize": true,
       "target": {
         "target": "default",
         "arch": [
@@ -209,7 +209,7 @@
       "hardenedRuntime": true,
       "entitlements": "assets/entitlements.mac.plist",
       "entitlementsInherit": "assets/entitlements.mac.plist",
-      "gatekeeperAssess": false
+      "gatekeeperAssess": true
     },
     "dmg": {
       "contents": [

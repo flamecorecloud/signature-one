@@ -246,8 +246,8 @@
     ],
     "publish": {
       "provider": "github",
-      "owner": "andikachamberlin",
-      "repo": "https://github.com/Perbaungan-APP/desktop"
+      "owner": "flamecorecloud",
+      "repo": "signature-one"
     }
   },
   "devEngines": {

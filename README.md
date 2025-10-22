@@ -1,11 +1,3 @@
-# Note
+# DONATE
 
-"extraResources": [
-  {
-    "from": "src/resources/libreoffice/mac",
-    "to": "libreoffice/mac",
-    "filter": [
-      "**/*"
-    ]
-  }
-]
+https://www.patreon.com/cw/andikachamberlin

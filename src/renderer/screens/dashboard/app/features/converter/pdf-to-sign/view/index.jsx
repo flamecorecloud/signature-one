@@ -12,7 +12,6 @@ import SkeletonText from '../../../../../../../components/skeleton/text';
 import { ErrorLog } from '../../../../../../../components/error';
 
 export default function Screen() {
-  const [version, setVersion] = useState('');
   const [files, setFiles] = useState([]);
   const [progress, setProgress] = useState(0);
   const [progressMessage, setProgressMessage] = useState('');
@@ -33,10 +32,7 @@ export default function Screen() {
 
   const fileInputRef = useRef(null);
 
-  // ambil versi LibreOffice
   useEffect(() => {
-    window.electronAPI.getLibreVersion().then(setVersion).catch(console.error);
-
     // dengarkan progress dari main process
     window.electronAPI.onConvertProgress((data) => {
       setProgress(data.value);

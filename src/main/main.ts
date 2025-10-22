@@ -148,23 +148,6 @@ app
 // const sofficePath = getSofficePath();
 // console.log('Using LibreOffice binary:', sofficePath);
 
-ipcMain.handle('libre-version', async () => {
-  try {
-    // return await new Promise((resolve, reject) => {
-    //   execFile(sofficePath, ['--version'], (err: any, stdout: any) => {
-    //     if (err) {
-    //       console.error('LibreOffice version check failed:', err);
-    //       return reject(err);
-    //     }
-    //     resolve(stdout.trim());
-    //   });
-    // });
-    return '-'
-  } catch (err: any) {
-    return `Error checking LibreOffice version: ${err.message}`;
-  }
-});
-
 ipcMain.handle('select-cert-file', async () => {
   const result = await dialog.showOpenDialog({
     title: 'Select the digital certificate file (.p12)',

@@ -27,7 +27,6 @@ const electronHandler = {
 contextBridge.exposeInMainWorld('electron', electronHandler);
 
 contextBridge.exposeInMainWorld('electronAPI', {
-  getLibreVersion: () => ipcRenderer.invoke("libre-version"),
   uploadFile: (params:any) => ipcRenderer.invoke('upload-file', params),
   selectCertFile: () => ipcRenderer.invoke('select-cert-file'),
   onConvertProgress: (callback:any) => {

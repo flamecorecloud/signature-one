@@ -4,6 +4,7 @@ import path from 'path';
 import { plainAddPlaceholder } from '@signpdf/placeholder-plain';
 import { SignPdf } from '@signpdf/signpdf';
 import { P12Signer } from '@signpdf/signer-p12';
+// import { addExpiryVisualBlock } from './postProcessPDFExpired';
 
 export async function postProcessPDF(
   outputFile: any,
@@ -72,7 +73,6 @@ export async function postProcessPDF(
         fs.mkdirSync(signedDir, { recursive: true });
       }
 
-      // Simpan hasil signed ke dalam folder baru
       const baseName = path.basename(outputFile, '.pdf');
       const signedFile = path.join(signedDir, `${baseName}-signed.pdf`);
 
@@ -85,6 +85,7 @@ export async function postProcessPDF(
         message: 'Successfully',
       };
     } else {
+
       fs.writeFileSync(outputFile, pdfBuffer);
       console.log(`✅ Watermarked PDF saved: ${outputFile}`);
       return {

@@ -250,6 +250,10 @@
       "repo": "signature-one"
     }
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/flamecorecloud/signature-one.git"
+  },
   "devEngines": {
     "runtime": {
       "name": "node",

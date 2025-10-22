@@ -77,7 +77,7 @@ export async function postProcessPDF(
       const signedFile = path.join(signedDir, `${baseName}-signed.pdf`);
 
       fs.writeFileSync(signedFile, signedPdf);
-      console.log(`✅ PDF signed successfully: ${signedFile}`);
+      console.log(`PDF signed successfully: ${signedFile}`);
 
       return {
         output: signedFile,
@@ -85,9 +85,8 @@ export async function postProcessPDF(
         message: 'Successfully',
       };
     } else {
-
       fs.writeFileSync(outputFile, pdfBuffer);
-      console.log(`✅ Watermarked PDF saved: ${outputFile}`);
+      console.log(`Watermarked PDF saved: ${outputFile}`);
       return {
         output: outputFile,
         status : 'success',

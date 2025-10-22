@@ -20,27 +20,16 @@ jobs:
           node-version: 22
           cache: npm
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Install Linux dependencies
-        if: runner.os == 'Linux'
+      - name: npm install
         run: |
-          sudo apt-get update
-          sudo apt-get install -y xvfb libnss3 libxkbfile1 libgconf-2-4 libxrandr2 libgtk-3-0 libxss1 libasound2
+          npm install
 
-      - name: Run tests
+      - name: npm test
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CI: true
         run: |
-          if [ "$RUNNER_OS" == "Linux" ]; then
-            xvfb-run --auto-servernum -- npm run package
-            xvfb-run --auto-servernum -- npm run lint
-            xvfb-run --auto-servernum -- npm exec tsc
-            xvfb-run --auto-servernum -- npm test
-          else
-            npm run package
-            npm run lint
-            npm exec tsc
-            npm test
-          fi
+          npm run package
+          npm run lint
+          npm exec tsc
+          npm test

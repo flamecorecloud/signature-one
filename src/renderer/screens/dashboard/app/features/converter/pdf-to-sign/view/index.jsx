@@ -30,6 +30,10 @@ export default function Screen() {
 
   const [folder, setFolder] = useState('');
 
+  const [encryptToggle, setEncryptToggle] = useState(false);
+  const [encryptPassword, setEncryptPassword] = useState('');
+  const [expiryDate, setExpiryDate] = useState('');
+
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -45,6 +49,31 @@ export default function Screen() {
   };
 
   const startConversion = async () => {
+    if (signPdf) {
+      if (!certPath) {
+        return ErrorLog({
+          message: 'Certificate Required',
+        });
+      }
+      if (!certPassword) {
+        return ErrorLog({
+          message: 'Password Certificate Required',
+        });
+      }
+    }
+    if (encryptToggle) {
+      if (!encryptPassword) {
+        return ErrorLog({
+          message: 'Encrypt Password Required',
+        });
+      }
+      if (!expiryDate) {
+        return ErrorLog({
+          message: 'Expiry Date Required',
+        });
+      }
+    }
+
     setIsConverting(true);
     setProgress(0);
     setConversionResult(null);
@@ -59,7 +88,10 @@ export default function Screen() {
           certPath,
           certPassword,
           pdf: true,
-          folder
+          folder,
+          encryptToggle,
+          encryptPassword,
+          expiryDate,
         },
         placeholder: {
           reason: reason || 'Document verification',
@@ -69,15 +101,14 @@ export default function Screen() {
         },
       });
       if (!results) return;
-      console.log('results', results)
+      console.log('results', results);
 
       setConversionResult(results);
-      
     } catch (err) {
       console.error(err);
       ErrorLog({
-        message : error.message
-      })
+        message: error.message,
+      });
     } finally {
       setIsConverting(false);
       setProgress(100);
@@ -109,7 +140,10 @@ export default function Screen() {
               <span className="font-semibold text-blue-600 dark:text-blue-400">
                 Flamecore Cloud
               </span>{' '}
-              ecosystem — a digital signing engine that gives you total freedom. No file size limits, no upload restrictions, and no internet dependency. Your documents stay private and secure because everything runs locally on your device.
+              ecosystem — a digital signing engine that gives you total freedom.
+              No file size limits, no upload restrictions, and no internet
+              dependency. Your documents stay private and secure because
+              everything runs locally on your device.
             </p>
 
             <button
@@ -125,12 +159,14 @@ export default function Screen() {
           <div className=" p-8 md:p-10 rounded-3xl border my-4">
             <p className="text-2xl font-bold mb-4">Conversion complete</p>
             {conversionResult.map((item, index) => {
-              if(item.status === 'success'){
+              if (item.status === 'success') {
                 return (
-                  <div key={index} className="md:flex items-center gap-4 text-sm">
+                  <div
+                    key={index}
+                    className="md:flex items-center gap-4 text-sm"
+                  >
                     <p className="flex-1">
-                      Input:{' '}
-                      <span className="text-blue-400">{item.input}</span>
+                      Input: <span className="text-blue-400">{item.input}</span>
                     </p>
                     <p className="flex-1">
                       Output:{' '}
@@ -140,7 +176,10 @@ export default function Screen() {
                 );
               } else {
                 return (
-                  <div key={index} className="md:flex items-center gap-4 text-sm">
+                  <div
+                    key={index}
+                    className="md:flex items-center gap-4 text-sm"
+                  >
                     <p className="flex-1">
                       File Path:{' '}
                       <span className="text-blue-400">{item.filePath}</span>
@@ -170,14 +209,6 @@ export default function Screen() {
             value={folder}
             onChange={(e) => setFolder(e.target.value)}
             placeholder="Signed"
-          />
-          <label className="block font-medium">Watermark (optional):</label>
-          <input
-            type="text"
-            className="w-full border rounded-lg px-3 py-2"
-            value={watermark}
-            onChange={(e) => setWatermark(e.target.value)}
-            placeholder="Confidential"
           />
 
           <div className="flex items-center mt-2">
@@ -212,10 +243,18 @@ export default function Screen() {
 
           {signPdf && (
             <>
+              <label className="block font-medium">Watermark (optional):</label>
+              <input
+                type="text"
+                className="w-full border rounded-lg px-3 py-2"
+                value={watermark}
+                onChange={(e) => setWatermark(e.target.value)}
+                placeholder="Confidential"
+              />
               <div className="flex items-center gap-2 mt-2">
                 <button
                   onClick={handleUploadCert}
-                  className="px-3 py-2 border text-sm rounded-md"
+                  className="px-3 py-2 border text-sm rounded-md cursor-pointer"
                 >
                   Select Certificate (.p12)
                 </button>
@@ -263,6 +302,63 @@ export default function Screen() {
                 />
               </div>
             </>
+          )}
+        </div>
+
+        <div className="mt-4 space-y-3 border rounded-3xl p-8 md:p-10">
+          <div className="flex items-center mt-2">
+            <input
+              type="checkbox"
+              checked={encryptToggle}
+              onChange={(e) => setEncryptToggle(e.target.checked)}
+              className="
+                mr-2
+                  w-5 h-5
+                  appearance-none
+                  border border-gray-300 
+                  rounded-md 
+                  bg-white 
+                  checked:bg-blue-600
+                  checked:border-blue-600
+                  dark:bg-gray-800
+                  dark:border-gray-600 
+                  dark:checked:bg-blue-500
+                  cursor-pointer
+                  relative
+                  checked:before:content-['✓']
+                  checked:before:absolute
+                  checked:before:text-white
+                  checked:before:text-sm
+                  checked:before:left-[3px]
+                  checked:before:top-[-1.3px]
+              "
+            />
+            <label>Encrypt</label>
+          </div>
+          {encryptToggle && (
+            <div className="flex items-center gap-4 mt-4">
+              <div className="flex-1">
+                <label className="block font-medium mb-2">
+                  Encryption Password
+                </label>
+                <input
+                  type="password"
+                  className="w-full border rounded-lg px-3 py-2"
+                  value={encryptPassword}
+                  onChange={(e) => setEncryptPassword(e.target.value)}
+                  placeholder="Enter encryption password"
+                />
+              </div>
+              <div className="flex-1">
+                <label className="block font-medium mb-2">Expiry Date:</label>
+                <input
+                  type="date"
+                  className="w-full border rounded-lg px-3 py-2"
+                  value={expiryDate}
+                  onChange={(e) => setExpiryDate(e.target.value)}
+                />
+              </div>
+            </div>
           )}
         </div>
 

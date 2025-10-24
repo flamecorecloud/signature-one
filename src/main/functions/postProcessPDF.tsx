@@ -14,7 +14,7 @@ export async function postProcessPDF(
   action: any,
 ) {
   try {
-    const { watermark, signPdf, certPath, certPassword, pdf, folder } = options;
+    const { watermark, signPdf, certPath, certPassword, pdf, folder, encryptToggle, encryptPassword, expiryDate } = options;
 
     const outputDir = path.dirname(outputFile);
     if (!fs.existsSync(outputDir)) {
@@ -45,13 +45,13 @@ export async function postProcessPDF(
     let tempFile;
     if (signPdf) {
       if (action === 'pdf-to-sign') {
-        tempFile = outputFile.replace('.pdf', '-to-sign.pdf');
+        fs.writeFileSync(outputFile, newPdfBytes);
+        pdfBuffer = fs.readFileSync(outputFile);
       } else {
         tempFile = outputFile.replace('.pdf', '-unsign.pdf');
+        fs.writeFileSync(tempFile, newPdfBytes);
+        pdfBuffer = fs.readFileSync(tempFile);
       }
-
-      fs.writeFileSync(tempFile, newPdfBytes);
-      pdfBuffer = fs.readFileSync(tempFile);
     } else {
       fs.writeFileSync(outputFile, newPdfBytes);
       pdfBuffer = fs.readFileSync(outputFile);
@@ -80,6 +80,14 @@ export async function postProcessPDF(
       fs.writeFileSync(signedFile, signedPdf);
       console.log(`PDF signed successfully: ${signedFile}`);
 
+      if(encryptToggle){
+        const expiryFile = signedFile.replace('.pdf', '-expiry.enc');
+        const expiryDateConvert = new Date(expiryDate);
+  
+        encryptWithExpiry(signedFile, expiryFile, encryptPassword, expiryDateConvert);
+        console.log(`PDF encrypted ${expiryDate}`);
+      }
+
       return {
         output: signedFile,
         status : 'success',
@@ -87,13 +95,6 @@ export async function postProcessPDF(
       };
     } else {
       fs.writeFileSync(outputFile, pdfBuffer);
-      console.log(`Watermarked PDF saved: ${outputFile}`);
-
-      // const expiryFile = outputFile.replace('.pdf', '-expiry.enc');
-      // const expiryDate = new Date('2025-10-25');
-
-      // encryptWithExpiry(outputFile, expiryFile, 'test123', expiryDate);
-      // console.log(`PDF dienkripsi dengan masa berlaku sampai ${expiryDate.toISOString()}`);
 
       return {
         output: outputFile,

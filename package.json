@@ -197,7 +197,7 @@
       "package.json"
     ],
     "mac": {
-      "notarize": true,
+      "notarize": false,
       "target": {
         "target": "default",
         "arch": [
@@ -209,7 +209,7 @@
       "hardenedRuntime": true,
       "entitlements": "assets/entitlements.mac.plist",
       "entitlementsInherit": "assets/entitlements.mac.plist",
-      "gatekeeperAssess": true
+      "gatekeeperAssess": false
     },
     "dmg": {
       "contents": [

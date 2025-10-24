@@ -1,7 +1,6 @@
 import crypto from 'crypto';
 import fs from 'fs';
 
-// 🔒 Enkripsi dengan tanggal kedaluwarsa
 export function encryptWithExpiry(inputPath:any, outputPath:any, password:any, expiryDate:any) {
   const key = crypto.createHash('sha256').update(password).digest();
   const iv = crypto.randomBytes(16);
@@ -19,7 +18,6 @@ export function encryptWithExpiry(inputPath:any, outputPath:any, password:any, e
   return outputPath;
 }
 
-// 🔓 Dekripsi (cek tanggal dulu)
 export function decryptWithExpiry(inputPath:any, outputPath:any, password:any) {
   const fileBuffer = fs.readFileSync(inputPath);
   const iv = fileBuffer.subarray(0, 16);

@@ -34,6 +34,8 @@ export default function Screen() {
   const [encryptPassword, setEncryptPassword] = useState('');
   const [expiryDate, setExpiryDate] = useState('');
 
+  const [decrypt, setDecrypt] = useState(false);
+
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -73,6 +75,13 @@ export default function Screen() {
         });
       }
     }
+    if (decrypt) {
+      if (!encryptPassword) {
+        return ErrorLog({
+          message: 'Decrypt Password Required',
+        });
+      }
+    }
 
     setIsConverting(true);
     setProgress(0);
@@ -92,6 +101,7 @@ export default function Screen() {
           encryptToggle,
           encryptPassword,
           expiryDate,
+          decrypt
         },
         placeholder: {
           reason: reason || 'Document verification',
@@ -306,34 +316,69 @@ export default function Screen() {
         </div>
 
         <div className="mt-4 space-y-3 border rounded-3xl p-8 md:p-10">
-          <div className="flex items-center mt-2">
-            <input
-              type="checkbox"
-              checked={encryptToggle}
-              onChange={(e) => setEncryptToggle(e.target.checked)}
-              className="
-                mr-2
-                  w-5 h-5
-                  appearance-none
-                  border border-gray-300 
-                  rounded-md 
-                  bg-white 
-                  checked:bg-blue-600
-                  checked:border-blue-600
-                  dark:bg-gray-800
-                  dark:border-gray-600 
-                  dark:checked:bg-blue-500
-                  cursor-pointer
-                  relative
-                  checked:before:content-['✓']
-                  checked:before:absolute
-                  checked:before:text-white
-                  checked:before:text-sm
-                  checked:before:left-[3px]
-                  checked:before:top-[-1.3px]
-              "
-            />
-            <label>Encrypt</label>
+          <div className="flex items-center gap-4">
+            <div className="flex-1">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={encryptToggle}
+                  onChange={(e) => setEncryptToggle(e.target.checked)}
+                  className="
+                    mr-2
+                      w-5 h-5
+                      appearance-none
+                      border border-gray-300 
+                      rounded-md 
+                      bg-white 
+                      checked:bg-blue-600
+                      checked:border-blue-600
+                      dark:bg-gray-800
+                      dark:border-gray-600 
+                      dark:checked:bg-blue-500
+                      cursor-pointer
+                      relative
+                      checked:before:content-['✓']
+                      checked:before:absolute
+                      checked:before:text-white
+                      checked:before:text-sm
+                      checked:before:left-[3px]
+                      checked:before:top-[-1.3px]
+                  "
+                />
+                <label>Encrypt</label>
+              </div>
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={decrypt}
+                  onChange={(e) => setDecrypt(e.target.checked)}
+                  className="
+                    mr-2
+                      w-5 h-5
+                      appearance-none
+                      border border-gray-300 
+                      rounded-md 
+                      bg-white 
+                      checked:bg-blue-600
+                      checked:border-blue-600
+                      dark:bg-gray-800
+                      dark:border-gray-600 
+                      dark:checked:bg-blue-500
+                      cursor-pointer
+                      relative
+                      checked:before:content-['✓']
+                      checked:before:absolute
+                      checked:before:text-white
+                      checked:before:text-sm
+                      checked:before:left-[3px]
+                      checked:before:top-[-1.3px]
+                  "
+                />
+                <label>Decrypt</label>
+              </div>
+            </div>
           </div>
           {encryptToggle && (
             <div className="flex items-center gap-4 mt-4">
@@ -356,6 +401,22 @@ export default function Screen() {
                   className="w-full border rounded-lg px-3 py-2"
                   value={expiryDate}
                   onChange={(e) => setExpiryDate(e.target.value)}
+                />
+              </div>
+            </div>
+          )}
+          {decrypt && (
+            <div className="flex items-center gap-4 mt-4">
+              <div className="flex-1">
+                <label className="block font-medium mb-2">
+                  Decrypt Password
+                </label>
+                <input
+                  type="password"
+                  className="w-full border rounded-lg px-3 py-2"
+                  value={encryptPassword}
+                  onChange={(e) => setEncryptPassword(e.target.value)}
+                  placeholder="Enter Decrypt password"
                 />
               </div>
             </div>

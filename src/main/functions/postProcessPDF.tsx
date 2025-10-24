@@ -4,7 +4,7 @@ import path from 'path';
 import { plainAddPlaceholder } from '@signpdf/placeholder-plain';
 import { SignPdf } from '@signpdf/signpdf';
 import { P12Signer } from '@signpdf/signer-p12';
-import { encryptWithExpiry } from './postProcessSecure';
+import { decryptWithExpiry, encryptWithExpiry } from './postProcessSecure';
 // import { addExpiryVisualBlock } from './postProcessPDFExpired';
 
 export async function postProcessPDF(
@@ -14,7 +14,18 @@ export async function postProcessPDF(
   action: any,
 ) {
   try {
-    const { watermark, signPdf, certPath, certPassword, pdf, folder, encryptToggle, encryptPassword, expiryDate } = options;
+    const {
+      watermark,
+      signPdf,
+      certPath,
+      certPassword,
+      pdf,
+      folder,
+      encryptToggle,
+      encryptPassword,
+      expiryDate,
+      decrypt,
+    } = options;
 
     const outputDir = path.dirname(outputFile);
     if (!fs.existsSync(outputDir)) {
@@ -39,73 +50,104 @@ export async function postProcessPDF(
       }
     }
 
-    const newPdfBytes = await pdfDoc.save({ useObjectStreams: false });
-    let pdfBuffer;
-
-    let tempFile;
-    if (signPdf) {
-      if (action === 'pdf-to-sign') {
-        fs.writeFileSync(outputFile, newPdfBytes);
-        pdfBuffer = fs.readFileSync(outputFile);
-      } else {
-        tempFile = outputFile.replace('.pdf', '-unsign.pdf');
-        fs.writeFileSync(tempFile, newPdfBytes);
-        pdfBuffer = fs.readFileSync(tempFile);
-      }
-    } else {
-      fs.writeFileSync(outputFile, newPdfBytes);
-      pdfBuffer = fs.readFileSync(outputFile);
-    }
-
-    if (signPdf && certPath) {
-      const pdfWithPlaceholder = plainAddPlaceholder({
-        pdfBuffer,
-        ...placeholder,
-      });
-
-      const p12Buffer = fs.readFileSync(certPath);
-      const signer = new SignPdf();
-      const p12Signer = new P12Signer(p12Buffer, { passphrase: certPassword });
-
-      const signedPdf = await signer.sign(pdfWithPlaceholder, p12Signer);
-
-      const signedDir = path.join(outputDir, folder || 'signed');
-      if (!fs.existsSync(signedDir)) {
-        fs.mkdirSync(signedDir, { recursive: true });
+    if (decrypt) {
+      const decryptDir = path.join(outputDir, folder);
+      if (!fs.existsSync(decryptDir)) {
+        fs.mkdirSync(decryptDir, { recursive: true });
       }
 
       const baseName = path.basename(outputFile, '.pdf');
-      const signedFile = path.join(signedDir, `${baseName}-signed.pdf`);
+      const encryptedFile = outputFile;
+      const decryptedFile = path.join(decryptDir, `${baseName}-decrypted.pdf`);
 
-      fs.writeFileSync(signedFile, signedPdf);
-      console.log(`PDF signed successfully: ${signedFile}`);
-
-      if(encryptToggle){
-        const expiryFile = signedFile.replace('.pdf', '-expiry.enc');
-        const expiryDateConvert = new Date(expiryDate);
-  
-        encryptWithExpiry(signedFile, expiryFile, encryptPassword, expiryDateConvert);
-        console.log(`PDF encrypted ${expiryDate}`);
-      }
+      decryptWithExpiry(encryptedFile, decryptedFile, encryptPassword);
+      console.log(`PDF decrypted successfully: ${decryptedFile}`);
 
       return {
-        output: signedFile,
-        status : 'success',
-        message: 'Successfully',
+        data : {
+          encryptedFile,
+          decryptedFile,
+          encryptPassword
+        },
+        output: decryptedFile,
+        status: 'success',
+        message: 'Successfully decrypted and expiry applied',
       };
     } else {
-      fs.writeFileSync(outputFile, pdfBuffer);
+      const newPdfBytes = await pdfDoc.save({ useObjectStreams: false });
+      let pdfBuffer;
 
-      return {
-        output: outputFile,
-        status : 'success',
-        message: 'Successfully',
-      };
+      let tempFile;
+      if (signPdf) {
+        if (action === 'pdf-to-sign') {
+          fs.writeFileSync(outputFile, newPdfBytes);
+          pdfBuffer = fs.readFileSync(outputFile);
+        } else {
+          tempFile = outputFile.replace('.pdf', '-unsign.pdf');
+          fs.writeFileSync(tempFile, newPdfBytes);
+          pdfBuffer = fs.readFileSync(tempFile);
+        }
+      } else {
+        fs.writeFileSync(outputFile, newPdfBytes);
+        pdfBuffer = fs.readFileSync(outputFile);
+      }
+      if (signPdf && certPath) {
+        const pdfWithPlaceholder = plainAddPlaceholder({
+          pdfBuffer,
+          ...placeholder,
+        });
+
+        const p12Buffer = fs.readFileSync(certPath);
+        const signer = new SignPdf();
+        const p12Signer = new P12Signer(p12Buffer, {
+          passphrase: certPassword,
+        });
+
+        const signedPdf = await signer.sign(pdfWithPlaceholder, p12Signer);
+
+        const signedDir = path.join(outputDir, folder || 'signed');
+        if (!fs.existsSync(signedDir)) {
+          fs.mkdirSync(signedDir, { recursive: true });
+        }
+
+        const baseName = path.basename(outputFile, '.pdf');
+        const signedFile = path.join(signedDir, `${baseName}-signed.pdf`);
+
+        fs.writeFileSync(signedFile, signedPdf);
+        console.log(`PDF signed successfully: ${signedFile}`);
+
+        if (encryptToggle) {
+          const expiryFile = signedFile.replace('.pdf', '-expiry.enc');
+          const expiryDateConvert = new Date(expiryDate);
+
+          encryptWithExpiry(
+            signedFile,
+            expiryFile,
+            encryptPassword,
+            expiryDateConvert,
+          );
+          console.log(`PDF encrypted ${expiryDate}`);
+        }
+
+        return {
+          output: signedFile,
+          status: 'success',
+          message: 'Successfully',
+        };
+      } else {
+        fs.writeFileSync(outputFile, pdfBuffer);
+
+        return {
+          output: outputFile,
+          status: 'success',
+          message: 'Successfully',
+        };
+      }
     }
-  } catch (err:any) {
+  } catch (err: any) {
     return {
       output: outputFile,
-      status : 'error',
+      status: 'error',
       message: err.message,
     };
   }

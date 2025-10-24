@@ -219,7 +219,7 @@ ipcMain.handle('upload-file', async (event, params) => {
   const result = await dialog.showOpenDialog({
     title: 'Select files to upload',
     properties: ['openFile', 'multiSelections'],
-    filters,
+    filters : options?.decrypt ? [{ name: 'Encrypt', extensions: ['enc'] }] : filters,
   });
 
   if (result.canceled || result.filePaths.length === 0) return null;
@@ -243,7 +243,6 @@ ipcMain.handle('upload-file', async (event, params) => {
       outputDir,
       path.basename(filePath, path.extname(filePath)) + '.' + targetExt,
     );
-    
 
     sendProgress(
       Math.round((i / total) * 10),

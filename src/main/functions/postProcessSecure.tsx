@@ -30,7 +30,7 @@ export function decryptWithExpiry(inputPath:any, outputPath:any, password:any) {
   const expiry = new Date(metadata.expiry);
 
   if (new Date() > expiry) {
-    throw new Error('File sudah kadaluarsa dan tidak bisa dibuka.');
+    throw new Error('The file has expired and cannot be opened.');
   }
 
   const encryptedData = fileBuffer.subarray(metadataEnd);

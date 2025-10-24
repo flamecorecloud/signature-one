@@ -32,26 +32,8 @@ export async function postProcessPDF(
       fs.mkdirSync(outputDir, { recursive: true });
     }
 
-    const pdfBytes = fs.readFileSync(outputFile);
-    const pdfDoc = await PDFDocument.load(pdfBytes);
-
-    if (watermark) {
-      const pages = pdfDoc.getPages();
-      for (const page of pages) {
-        const { width, height } = page.getSize();
-        page.drawText(watermark, {
-          x: width / 2 - 120,
-          y: height / 2,
-          size: 48,
-          opacity: 0.15,
-          rotate: degrees(45),
-          color: rgb(0.8, 0.1, 0.1),
-        });
-      }
-    }
-
     if (decrypt) {
-      const decryptDir = path.join(outputDir, folder);
+      const decryptDir = path.join(outputDir, folder || 'decrypt');
       if (!fs.existsSync(decryptDir)) {
         fs.mkdirSync(decryptDir, { recursive: true });
       }
@@ -64,16 +46,30 @@ export async function postProcessPDF(
       console.log(`PDF decrypted successfully: ${decryptedFile}`);
 
       return {
-        data : {
-          encryptedFile,
-          decryptedFile,
-          encryptPassword
-        },
         output: decryptedFile,
         status: 'success',
         message: 'Successfully decrypted and expiry applied',
       };
     } else {
+
+      const pdfBytes = fs.readFileSync(outputFile);
+      const pdfDoc = await PDFDocument.load(pdfBytes);
+
+      if (watermark) {
+        const pages = pdfDoc.getPages();
+        for (const page of pages) {
+          const { width, height } = page.getSize();
+          page.drawText(watermark, {
+            x: width / 2 - 120,
+            y: height / 2,
+            size: 48,
+            opacity: 0.15,
+            rotate: degrees(45),
+            color: rgb(0.8, 0.1, 0.1),
+          });
+        }
+      }
+
       const newPdfBytes = await pdfDoc.save({ useObjectStreams: false });
       let pdfBuffer;
 

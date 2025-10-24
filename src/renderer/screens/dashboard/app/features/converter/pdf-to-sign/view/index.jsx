@@ -322,7 +322,12 @@ export default function Screen() {
                 <input
                   type="checkbox"
                   checked={encryptToggle}
-                  onChange={(e) => setEncryptToggle(e.target.checked)}
+                  onChange={(e) => {
+                    if(decrypt){
+                      setDecrypt(false);
+                    }
+                    setEncryptToggle(e.target.checked)
+                  }}
                   className="
                     mr-2
                       w-5 h-5
@@ -353,7 +358,12 @@ export default function Screen() {
                 <input
                   type="checkbox"
                   checked={decrypt}
-                  onChange={(e) => setDecrypt(e.target.checked)}
+                  onChange={(e) => {
+                    if(encryptToggle){
+                      setEncryptToggle(false);
+                    }
+                    setDecrypt(e.target.checked)
+                  }}
                   className="
                     mr-2
                       w-5 h-5

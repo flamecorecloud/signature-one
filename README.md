@@ -2,6 +2,8 @@
 ![license](https://img.shields.io/badge/license-MIT-green)
 ![platform](https://img.shields.io/badge/platform-Windows%20|%20macOS%20|%20Linux-lightgrey)
 
+[![VirusTotal Scan](https://img.shields.io/badge/VirusTotal-Checked-brightgreen?logo=virustotal)](https://www.virustotal.com/gui/collection/cbf8800f9f2501d22b606e4dd3429e8b25e372147473bb362fdbdcebc4c764f5/iocs)
+
 # Signature One
 
 A desktop application for securely signing, encrypting, and managing the expiration of PDF documents.

@@ -25,6 +25,9 @@
     "lint": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "cross-env NODE_ENV=development eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "package": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder build --publish never && npm run build:dll",
+    "package:mac" : "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder --mac --publish never && npm run build:dll",
+    "package:win" : "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder --win --publish never && npm run build:dll",
+    "package:linux" : "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder --linux --publish never && npm run build:dll",
     "package:all": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder --mac --win --linux --publish never && npm run build:dll",
     "package:all:publish": "ts-node ./.erb/scripts/clean.js dist && npm run build && electron-builder --mac --win --linux --publish always && npm run build:dll",
     "rebuild": "electron-rebuild --parallel --types prod,dev,optional --module-dir release/app",
@@ -209,7 +212,8 @@
       "hardenedRuntime": true,
       "entitlements": "assets/entitlements.mac.plist",
       "entitlementsInherit": "assets/entitlements.mac.plist",
-      "gatekeeperAssess": false
+      "gatekeeperAssess": false,
+      "identity": "PT. Flamecore Cloud Indonesia"
     },
     "dmg": {
       "contents": [
@@ -228,7 +232,10 @@
     "win": {
       "target": [
         "nsis"
-      ]
+      ],
+      "signtoolOptions": {
+        "publisherName": "PT. Flamecore Cloud Indonesia"
+      }
     },
     "linux": {
       "target": [

@@ -52,8 +52,21 @@ Built with **Electron + React + Node.js**.
 
    ```bash
    npm start
-   ```
-4. Build the application:
+4. Generate Key.p12
+   ```bash
+   openssl genrsa -out private.key 2048 
+
+   openssl req -new -x509 -key private.key -out cert.crt -days 365
+
+   openssl pkcs12 -export \
+   -inkey private.key \
+   -in cert.crt \
+   -out key.p12
+5. Self Signed Certificate
+   ```bash
+   export CSC_LINK=.dev/fmc/key.p12
+   export CSC_KEY_PASSWORD=password 
+6. Build the application:
 
    ```bash
    npm run package

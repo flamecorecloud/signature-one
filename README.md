@@ -62,6 +62,8 @@ Built with **Electron + React + Node.js**.
    -inkey private.key \
    -in cert.crt \
    -out key.p12
+   ```
+   Or use Certificate Generator (https://www.flamecore.cloud/self-signed-certificate)
 5. Self Signed Certificate
    ```bash
    export CSC_LINK=.dev/fmc/key.p12
